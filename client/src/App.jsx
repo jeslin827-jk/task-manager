@@ -2,16 +2,32 @@ import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 const filters = ['All tasks', 'Active', 'Completed']
+const API_BASE_URL = import.meta.env.DEV ? '' : 'https://taskflow-api-nte7.onrender.com'
 
 async function requestTasks(path = '', options = {}) {
-  const response = await fetch(`/api/tasks${path}`, {
+  const response = await fetch(`${API_BASE_URL}/api/tasks${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })
-  const result = await response.json().catch(() => ({}))
+  const contentType = response.headers.get('content-type') || ''
+  let result = {}
+
+  if (contentType.includes('application/json')) {
+    try {
+      result = await response.json()
+    } catch {
+      if (response.ok) {
+        throw new Error('The server returned an invalid response.')
+      }
+    }
+  }
 
   if (!response.ok) {
-    throw new Error(result.message || 'Something went wrong. Please try again.')
+    throw new Error(result.message || `API request failed (${response.status}).`)
+  }
+
+  if (!contentType.includes('application/json')) {
+    throw new Error('The server returned an invalid response.')
   }
 
   return result
