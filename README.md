@@ -1,130 +1,147 @@
 # TaskFlow Task Manager
 
-TaskFlow is a beginner-friendly task manager built with React, Express, and MongoDB. Tasks are saved in MongoDB and can be created, viewed, edited, deleted, and marked complete.
+TaskFlow is a beginner-friendly task manager built with React, Express, and MongoDB. Tasks can be created, viewed, edited, deleted, and marked complete. The application includes a responsive interface, task filters, progress indicators, and persistent storage in MongoDB.
 
-## Project structure
+## Live Demo
+
+- **Frontend:** https://taskflow-sx8j.onrender.com
+- **Backend API:** https://taskflow-api-nte7.onrender.com
+- **Health check:** https://taskflow-api-nte7.onrender.com/api/health
+- **Tasks endpoint:** https://taskflow-api-nte7.onrender.com/api/tasks
+
+> The backend API endpoints return JSON. Open the frontend link to use the application. Render's free services may take around 50 seconds to wake after inactivity.
+
+## Features
+
+- Create tasks with a title and optional description
+- View tasks saved in MongoDB
+- Edit task details
+- Mark tasks as complete or incomplete
+- Delete tasks
+- Filter tasks by All, Active/Pending, and Completed
+- View task counts and completion progress
+- Responsive React interface
+- REST API built with Express
+- Input validation and API error handling
+
+## Tech Stack
+
+- **Frontend:** React, Vite, JavaScript, CSS
+- **Backend:** Node.js, Express
+- **Database:** MongoDB Atlas with Mongoose
+- **Deployment:** Render
+- **Development assistance:** Code0 / CodeZero extension
+
+## Project Structure
 
 ```text
 task-manager/
-├── client/                  # React interface built with Vite
+├── client/                 # React interface built with Vite
 │   └── src/
-│       ├── App.jsx           # Task list, filters, and form
-│       ├── App.css           # Responsive task interface styles
-│       └── index.css         # Global styles
-└── server/                  # Express REST API
-    └── src/
-        ├── config/           # MongoDB connection
-        ├── controllers/      # Task request handling
-        ├── middleware/       # API error responses
-        ├── models/           # Mongoose task schema
-        ├── routes/           # API endpoints
-        └── utils/            # Input validation
+│       ├── App.jsx         # Task list, filters, and form
+│       ├── App.css         # Task interface styles
+│       ├── index.css       # Global styles
+│       └── main.jsx        # React entry point
+├── server/                 # Express REST API
+│   └── src/
+│       ├── config/          # MongoDB connection
+│       ├── controllers/     # Task request handling
+│       ├── models/          # Mongoose data models
+│       ├── routes/          # API routes
+│       └── server.js        # Server entry point
+└── README.md
 ```
 
-## Requirements
+## Run Locally
 
-- Node.js 20.19 or newer (or 22.12 or newer) and npm
-- MongoDB running locally, or a MongoDB Atlas connection string
+### Prerequisites
 
-## Setup
+- Node.js 20.19+ or 22.12+
+- npm
+- MongoDB local instance or MongoDB Atlas account
 
-1. Install the frontend packages:
+### 1. Set up the backend
 
-   ```powershell
-   cd client
-   npm install
-   ```
-
-2. Install the backend packages:
-
-   ```powershell
-   cd ..\server
-   npm install
-   ```
-
-3. Create the backend environment file by copying the example:
-
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-4. Open `.env` in the `server` directory. The example uses a local MongoDB database:
-
-   ```text
-   PORT=5000
-   MONGODB_URI=mongodb://127.0.0.1:27017/taskflow
-   ```
-
-   Start MongoDB before starting the API. To use MongoDB Atlas instead, replace `MONGODB_URI` with your Atlas connection string. Keep real credentials in `.env`, not in source control.
-
-## Run the application
-
-Open two terminals from the project root.
-
-In the first terminal, start the API:
-
-```powershell
+```bash
 cd server
+npm install
+```
+
+Create a `.env` file inside `server/`:
+
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/taskflow
+```
+
+For MongoDB Atlas, replace the local MongoDB URI with your Atlas connection string. Keep `.env` private and never commit credentials to GitHub.
+
+Start the backend:
+
+```bash
 npm run dev
 ```
 
-In the second terminal, start the React app:
+### 2. Set up the frontend
 
-```powershell
+Open a second terminal from the project root:
+
+```bash
 cd client
+npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite (usually `http://localhost:5173`). During development, Vite forwards `/api` requests to the Express server on port 5000.
+Open the local URL printed by Vite, usually `http://localhost:5173`. The Vite development proxy forwards `/api` requests to the local backend at `http://localhost:5000`.
 
-## API overview
+## API Endpoints
 
-The API uses JSON. Successful list, create, and update responses contain a `data` property; errors contain a human-readable `message`.
-
-| Method | Endpoint | Purpose |
+| Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/health` | Check that the API is running |
-| `GET` | `/api/tasks` | List tasks, newest first |
-| `POST` | `/api/tasks` | Create a task |
-| `PATCH` | `/api/tasks/:id` | Update task title, description, or completion status |
-| `DELETE` | `/api/tasks/:id` | Delete a task |
+| GET | `/api/health` | Check API health |
+| GET | `/api/tasks` | Retrieve tasks |
+| POST | `/api/tasks` | Create a task |
+| PATCH | `/api/tasks/:id` | Update task details or completion status |
+| DELETE | `/api/tasks/:id` | Delete a task |
 
-Example create request:
+### Validation
 
-```json
-{
-  "title": "Prepare project proposal",
-  "description": "Gather notes and outline the first draft."
-}
-```
+- Task title is required and limited to 120 characters.
+- Description is optional and limited to 500 characters.
+- Completion status must be a Boolean.
+- Invalid requests return a `400` response; a task that cannot be found returns `404`.
 
-Titles are required and limited to 120 characters. Descriptions are optional and limited to 500 characters. Completion status must be a Boolean. Invalid task input receives an HTTP `400` response; unknown task IDs and routes return clear `404` responses.
+## Verification
 
-## Checks
+The following project checks were run during development:
 
-Run the frontend linter and production build:
-
-```powershell
+```bash
 cd client
 npm run lint
 npm run build
 ```
 
-Run the backend input validation tests:
-
-```powershell
+```bash
 cd server
 npm test
 ```
 
-## AI Development Experience
+The frontend lint and production build passed, and all six server validation tests passed. The deployed backend was also checked: `/api/health` returned `{"status":"ok"}`, and `/api/tasks` returned task data from MongoDB.
 
-CodeZero was used throughout development of this assessment. It assisted with:
+## Code0 / CodeZero AI Development Experience
 
-- Implementing the React task interface, including task forms, list filters, progress display, and error states.
-- Building the Express REST API and wiring task persistence through Mongoose and MongoDB.
-- Adding task input validation and backend validation tests.
-- Reviewing setup and API documentation and running the backend test suite; all 6 tests passed.
+Code0 was used during development to assist with implementation, debugging, and verification. Specific examples include:
 
-Frontend lint and production build checks pass, and all 6 backend input-validation tests pass. A live MongoDB or Atlas connection was not verified as part of these checks. The developer should configure their own MongoDB connection and verify the application in their local environment.
+1. **React task interface:** helped implement the task form, task list, edit/delete actions, completion controls, and filters.
+2. **Express REST API:** helped build and refine task endpoints and request validation.
+3. **MongoDB persistence:** helped review the Mongoose connection and task data flow.
+4. **Error handling and deployment configuration:** helped diagnose API request errors and configure the frontend to call the deployed API in production while retaining the local Vite proxy for development.
+5. **Documentation and checks:** helped update setup/API documentation and run frontend lint/build checks and server validation tests.
 
+The reported automated checks passed as described in the Verification section. The live deployment was then manually checked using the health and tasks endpoints.
+
+## Notes
+
+- The backend and frontend are deployed as separate Render services.
+- Render free services may spin down after inactivity, so the first request can be delayed while a service starts.
+- Do not commit `.env` files, database passwords, or other secrets.
