@@ -52,7 +52,7 @@ task-manager/
 
    ```text
    PORT=5000
-   MONGODB_URI=mongodb://127.0.0.1:27017/daymark
+   MONGODB_URI=mongodb://127.0.0.1:27017/taskflow
    ```
 
    Start MongoDB before starting the API. To use MongoDB Atlas instead, replace `MONGODB_URI` with your Atlas connection string. Keep real credentials in `.env`, not in source control.
@@ -127,3 +127,4 @@ CodeZero was used throughout development of this assessment. It assisted with:
 - Reviewing setup and API documentation and running the backend test suite; all 6 tests passed.
 
 Frontend lint and production build checks pass, and all 6 backend input-validation tests pass. A live MongoDB or Atlas connection was not verified as part of these checks. The developer should configure their own MongoDB connection and verify the application in their local environment.
+
