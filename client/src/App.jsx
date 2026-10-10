@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 const filters = ['All tasks', 'Active', 'Completed']
-const API_BASE_URL = import.meta.env.DEV ? '' : 'https://taskflow-api-nte7.onrender.com'
+const API_BASE_URL = import.meta.env.DEV
+  ? '/api'
+  : 'https://taskflow-api-nte7.onrender.com/api'
 
 async function requestTasks(path = '', options = {}) {
-  const response = await fetch(`${API_BASE_URL}/api/tasks${path}`, {
+  const response = await fetch(`${API_BASE_URL}/tasks${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })
